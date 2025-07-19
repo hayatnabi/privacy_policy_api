@@ -1,32 +1,48 @@
 class PrivacyPolicyGenerator
-  def self.generate(app_name, platform, permissions)
-    <<~POLICY
+  def self.generate(app_name, platform, permissions, compliance = [])
+    base = <<~POLICY
       Privacy Policy for #{app_name}
 
       This privacy policy explains how #{app_name} ("we", "our", or "us") collects, uses, and protects your information when you use our #{platform} application.
 
       ## Information We Collect
-
-      Depending on your usage, we may request access to the following:
+      We may access:
       #{permissions.map { |perm| "- #{perm.capitalize}" }.join("\n")}
 
       ## How We Use Your Information
-
-      The collected information is used solely to provide and improve the user experience of the app. We do not sell, rent, or share your personal data with third parties without your consent.
+      Your data is used to operate and improve the app. We do not sell or share your data without consent.
 
       ## Data Security
-
-      We implement reasonable security measures to protect your data but cannot guarantee absolute security.
+      We use standard security practices to protect your data.
 
       ## Changes to This Policy
+      This policy may be updated and changes will be reflected here.
 
-      This privacy policy may be updated from time to time. We will notify you of any changes within the app.
-
-      ## Contact Us
-
-      If you have any questions or concerns about this privacy policy, please contact us through the app.
+      ## Contact
+      Reach out via the app for any privacy concerns.
 
       Last updated: #{Date.today}
+      
     POLICY
+
+    additions = []
+    if compliance.include?("GDPR")
+      additions << <<~GDPR
+        ## GDPR Compliance
+
+        We process personal data in accordance with the General Data Protection Regulation (EU GDPR). Users can request data access, correction, or deletion at any time.
+      GDPR
+    end
+
+    if compliance.include?("CCPA")
+      additions << <<~CCPA
+        ## CCPA Compliance
+
+        California users have the right to know, delete, or opt-out of the sale of personal information under the California Consumer Privacy Act (CCPA).
+      CCPA
+    end
+
+    base + additions.join("\n")
   end
+
 end
